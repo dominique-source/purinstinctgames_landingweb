@@ -620,6 +620,267 @@ footer {
   }
   .reveal { opacity:1; transform:none; }
 }
+
+/* ============ ARENA 360 ============ */
+.arena-layout {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 48px;
+  align-items: start;
+}
+
+.arena-floor {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4/3;
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 24px;
+  overflow: hidden;
+}
+
+.arena-floor-bg {
+  position: absolute;
+  inset: 0;
+  background: url('assets/terrain-drone-1.png') center/cover no-repeat;
+  opacity: .1;
+}
+
+.arena-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.arena-node {
+  position: absolute;
+  left: var(--nx);
+  top: var(--ny);
+  transform: translate(-50%, -50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  z-index: 10;
+  transition: transform .25s cubic-bezier(.16,1,.3,1);
+}
+
+.arena-node:hover { transform: translate(-50%,-50%) scale(1.1); }
+.arena-node.active { z-index: 20; }
+
+.arena-node-ring {
+  position: absolute;
+  inset: -10px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(var(--nrgb),.5);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.arena-node.active .arena-node-ring {
+  opacity: 1;
+  animation: nodeRipple 2s ease-out infinite;
+}
+
+@keyframes nodeRipple {
+  0%   { transform: scale(1);   opacity: .7; }
+  100% { transform: scale(1.8); opacity: 0;  }
+}
+
+.arena-node-dot {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(var(--nrgb),.1);
+  border: 1.5px solid rgba(var(--nrgb),.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .3s cubic-bezier(.16,1,.3,1);
+}
+
+.arena-node:hover .arena-node-dot,
+.arena-node.active .arena-node-dot {
+  background: rgba(var(--nrgb),.22);
+  border-color: rgb(var(--nrgb));
+  box-shadow: 0 0 18px rgba(var(--nrgb),.55), 0 0 50px rgba(var(--nrgb),.15);
+  transform: scale(1.15);
+}
+
+.arena-node-icon {
+  width: 22px; height: 22px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 8px rgba(var(--nrgb),.7));
+}
+
+.arena-node-mf {
+  font-family: var(--display);
+  font-weight: 900; font-style: italic;
+  font-size: 10px; letter-spacing: .1em;
+  color: rgb(var(--nrgb));
+  text-shadow: 0 0 10px rgba(var(--nrgb),.7);
+}
+
+.arena-node-label {
+  font-family: var(--display);
+  font-weight: 900; font-style: italic;
+  text-transform: uppercase;
+  font-size: 9.5px; letter-spacing: .1em;
+  color: rgba(244,244,242,.45);
+  white-space: nowrap;
+  pointer-events: none;
+  transition: color .25s;
+}
+
+.arena-node.active .arena-node-label { color: rgb(var(--nrgb)); }
+
+/* Detail panel */
+.arena-detail-wrap {
+  position: sticky;
+  top: 90px;
+}
+
+.arena-render-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/10;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-bottom: 24px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.07);
+}
+
+.arena-render-img {
+  position: absolute;
+  inset: 0; width: 100%; height: 100%;
+  object-fit: cover;
+  transition: opacity .3s ease, transform .3s ease;
+}
+
+.arena-render-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(0deg, rgba(10,10,10,.65) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.arena-mf-badge {
+  display: inline-flex;
+  align-items: center; gap: 6px;
+  font-family: var(--display);
+  font-weight: 900; font-style: italic;
+  font-size: 10.5px; letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--lime);
+  border: 1px solid rgba(var(--lime-rgb),.3);
+  padding: 4px 12px 5px;
+  border-radius: 40px;
+  background: rgba(var(--lime-rgb),.08);
+  margin-bottom: 10px;
+}
+
+.arena-mf-badge::before {
+  content: "";
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--lime);
+  box-shadow: 0 0 8px var(--lime);
+  animation: pulseDot 2.2s ease-in-out infinite;
+}
+
+.arena-zone-tag {
+  display: inline-block;
+  font-family: var(--display);
+  font-weight: 900; font-style: italic;
+  font-size: 12px; letter-spacing: .14em;
+  text-transform: uppercase;
+  padding: 4px 14px 5px;
+  border-radius: 40px;
+  border: 1px solid;
+  margin-bottom: 10px;
+  transition: color .3s, border-color .3s, background .3s;
+}
+
+.arena-station-name {
+  font-size: clamp(40px, 5.5vw, 72px);
+  color: var(--white);
+  margin-bottom: 12px;
+}
+
+.arena-station-desc {
+  color: var(--muted);
+  font-size: 15px; line-height: 1.7;
+  max-width: 40ch;
+}
+
+.arena-nav-row {
+  display: flex;
+  align-items: center; gap: 14px;
+  margin-top: 24px;
+}
+
+.arena-btn {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.05);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: rgba(244,244,242,.7);
+  display: flex;
+  align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: all .2s;
+  flex: none;
+}
+
+.arena-btn:hover {
+  border-color: rgba(var(--lime-rgb),.5);
+  color: var(--lime);
+  background: rgba(var(--lime-rgb),.08);
+}
+
+.arena-dots {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+  flex: 1;
+  justify-content: center;
+}
+
+.arena-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.2);
+  border: none;
+  cursor: pointer;
+  transition: all .3s;
+  padding: 0;
+}
+
+.arena-dot.active {
+  width: 18px;
+  border-radius: 3px;
+  background: rgb(var(--dot-rgb, 204,255,0));
+  box-shadow: 0 0 8px rgba(var(--dot-rgb, 204,255,0),.6);
+}
+
+@media(max-width:960px) {
+  .arena-layout { grid-template-columns: 1fr; gap: 32px; }
+  .arena-detail-wrap { position: static; }
+}
+
+@media(max-width:600px) {
+  .arena-floor { aspect-ratio: 1/1; }
+  .arena-node-dot { width: 36px; height: 36px; }
+  .arena-node-icon { width: 18px; height: 18px; }
+  .arena-node-label { display: none; }
+}
 </style>
 </head>
 <body>
@@ -789,6 +1050,56 @@ footer {
   </div>
 </section>
 
+<!-- ── ARENA 360 ── -->
+<section class="section" id="arena" aria-labelledby="arena-title">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow reveal">L'arène en 360°</span>
+      <h2 id="arena-title" class="reveal d1">
+        7 stations.<br><span class="lime">1 terrain.</span>
+      </h2>
+      <p class="reveal d2">
+        Des 5 instincts naturels aux deux expériences exclusives Moment Factory — clique sur chaque zone pour explorer l'arène avant d'y entrer.
+      </p>
+    </div>
+
+    <div class="arena-layout reveal d3">
+
+      <!-- Arena map -->
+      <div class="arena-map-wrap">
+        <div class="arena-floor" id="arenaFloor">
+          <div class="arena-floor-bg" aria-hidden="true"></div>
+          <svg id="arenaSvg" class="arena-svg" aria-hidden="true"></svg>
+        </div>
+      </div>
+
+      <!-- Station detail -->
+      <div class="arena-detail-wrap" id="arenaDetail" aria-live="polite" aria-label="Détails de la station">
+        <div class="arena-render-wrap">
+          <img id="arenaImg" src="" alt="" class="arena-render-img">
+          <div class="arena-render-overlay" aria-hidden="true"></div>
+        </div>
+        <div class="arena-info">
+          <div id="arenaMfBadge" class="arena-mf-badge" style="display:none">Moment Factory</div>
+          <div class="arena-zone-tag" id="arenaTag"></div>
+          <h3 class="arena-station-name" id="arenaName"></h3>
+          <p class="arena-station-desc" id="arenaDesc"></p>
+          <div class="arena-nav-row">
+            <button class="arena-btn" id="arenaPrev" aria-label="Station précédente">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            </button>
+            <div class="arena-dots" id="arenaDots" role="tablist" aria-label="Navigation stations"></div>
+            <button class="arena-btn" id="arenaNext" aria-label="Station suivante">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
 <!-- ── CTA ── -->
 <section class="cta-section" id="reserve" aria-labelledby="cta-title">
   <div class="cta-wrap">
@@ -870,6 +1181,178 @@ if (burger && navLinks) {
       : '';
   });
 }
+
+/* ── Arena 360 ── */
+(function () {
+  const STATIONS = [
+    { tag:'Z1',  name:'Vitesse',          rgb:'255,68,56',   img:'assets/render-speed.jpg',   icon:'assets/logo-speed.png',   mf:false, desc:'Sprint sur 40 m en 5 niveaux de difficulté. Explose au départ, mesure-toi contre le chrono.' },
+    { tag:'Z2',  name:'Mains',             rgb:'45,125,255',  img:'assets/render-hand.jpg',    icon:'assets/logo-hand.png',    mf:false, desc:'Lancers de précision et duels 3 contre 3. Coordination, réflexes et précision sous pression.' },
+    { tag:'Z3',  name:'Pieds',             rgb:'46,224,106',  img:'assets/render-foot.jpg',    icon:'assets/logo-foot.png',    mf:false, desc:'Duels 1 contre 1 de pure technicité. Dribble, finte et déstabilise ton adversaire.' },
+    { tag:'Z4',  name:'Agilité',           rgb:'255,196,0',   img:'assets/render-agility.jpg', icon:'assets/logo-agility.png', mf:false, desc:"Tag et cubes d'obstacles : vitesse de réaction, changements de direction, explosivité totale." },
+    { tag:'Z5',  name:'IQ de Jeu',         rgb:'164,92,255',  img:'assets/render-iq.jpg',      icon:'assets/logo-iq.png',      mf:false, desc:'Stratégie collective 3 contre 3. Lecture de jeu, prise de décision et intelligence tactique.' },
+    { tag:'MF1', name:'Moment Factory I',  rgb:'204,255,0',   img:'assets/render-mf1.jpg',     icon:null,                      mf:true,  desc:'Expérience immersive exclusive créée par Moment Factory. Lumières interactives, son spatialisé et réalité augmentée.' },
+    { tag:'MF2', name:'Moment Factory II', rgb:'204,255,0',   img:'assets/render-mf2.jpg',     icon:null,                      mf:true,  desc:'La deuxième zone Moment Factory — son, lumière et mouvement fusionnent dans une expérience sensorielle unique au monde.' },
+  ];
+
+  const NS = 'http://www.w3.org/2000/svg';
+  let activeIdx = 0;
+
+  function getPositions() {
+    return STATIONS.map((_, i) => {
+      const angle = (i / STATIONS.length) * 2 * Math.PI - Math.PI / 2;
+      return { x: 50 + 40 * Math.cos(angle), y: 50 + 34 * Math.sin(angle) };
+    });
+  }
+
+  function mkSvg(tag, attrs) {
+    const el = document.createElementNS(NS, tag);
+    Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v));
+    return el;
+  }
+
+  function buildArena() {
+    const floor = document.getElementById('arenaFloor');
+    const svg   = document.getElementById('arenaSvg');
+    const dots  = document.getElementById('arenaDots');
+    if (!floor || !svg) return;
+
+    const pos = getPositions();
+
+    // Dashed orbit ellipse
+    svg.appendChild(mkSvg('ellipse', {
+      cx:'50%', cy:'50%', rx:'30%', ry:'25%',
+      fill:'rgba(255,255,255,.02)',
+      stroke:'rgba(255,255,255,.07)',
+      'stroke-width':'1', 'stroke-dasharray':'5 4'
+    }));
+
+    // Center marker
+    svg.appendChild(mkSvg('circle', {
+      cx:'50%', cy:'50%', r:'4.5%',
+      fill:'rgba(204,255,0,.05)',
+      stroke:'rgba(204,255,0,.22)', 'stroke-width':'1'
+    }));
+
+    const label = mkSvg('text', {
+      x:'50%', y:'50%',
+      'text-anchor':'middle', 'dominant-baseline':'middle',
+      'font-family':"'Barlow Condensed',sans-serif",
+      'font-weight':'900', 'font-style':'italic',
+      'font-size':'11', fill:'rgba(204,255,0,.32)', 'letter-spacing':'3'
+    });
+    label.textContent = 'ARENE';
+    svg.appendChild(label);
+
+    // Connection lines (behind nodes)
+    pos.forEach((p, i) => {
+      const line = mkSvg('line', {
+        x1:'50%', y1:'50%',
+        x2: p.x + '%', y2: p.y + '%',
+        stroke: `rgba(${STATIONS[i].rgb},.14)`,
+        'stroke-width':'1', 'stroke-dasharray':'3 5'
+      });
+      line.dataset.lineIdx = i;
+      svg.appendChild(line);
+    });
+
+    // Station nodes
+    pos.forEach((p, i) => {
+      const s = STATIONS[i];
+      const btn = document.createElement('button');
+      btn.className = 'arena-node';
+      btn.setAttribute('aria-label', s.name);
+      btn.setAttribute('aria-pressed', i === 0 ? 'true' : 'false');
+      btn.style.setProperty('--nx', p.x + '%');
+      btn.style.setProperty('--ny', p.y + '%');
+      btn.style.setProperty('--nrgb', s.rgb);
+      btn.dataset.idx = i;
+      btn.innerHTML = `
+        <div class="arena-node-ring"></div>
+        <div class="arena-node-dot">
+          ${s.icon
+            ? `<img src="${s.icon}" alt="" class="arena-node-icon" loading="lazy">`
+            : `<span class="arena-node-mf">MF</span>`}
+        </div>
+        <span class="arena-node-label">${s.name}</span>`;
+      btn.addEventListener('click', () => setActive(i));
+      floor.appendChild(btn);
+    });
+
+    // Nav dots
+    if (dots) {
+      STATIONS.forEach((s, i) => {
+        const dot = document.createElement('button');
+        dot.className = 'arena-dot';
+        dot.setAttribute('aria-label', s.name);
+        dot.setAttribute('role', 'tab');
+        dot.dataset.dotIdx = i;
+        dot.addEventListener('click', () => setActive(i));
+        dots.appendChild(dot);
+      });
+    }
+
+    setActive(0);
+  }
+
+  function setActive(idx) {
+    activeIdx = idx;
+    const s = STATIONS[idx];
+
+    // Nodes
+    document.querySelectorAll('.arena-node').forEach((n, i) => {
+      n.classList.toggle('active', i === idx);
+      n.setAttribute('aria-pressed', String(i === idx));
+    });
+
+    // Lines
+    document.querySelectorAll('[data-line-idx]').forEach(line => {
+      const i = parseInt(line.dataset.lineIdx);
+      const on = i === idx;
+      line.setAttribute('stroke', `rgba(${STATIONS[i].rgb},${on ? '.65' : '.14'})`);
+      line.setAttribute('stroke-width', on ? '1.5' : '1');
+    });
+
+    // Dots
+    document.querySelectorAll('.arena-dot').forEach((dot, i) => {
+      dot.classList.toggle('active', i === idx);
+      if (i === idx) dot.style.setProperty('--dot-rgb', s.rgb);
+      dot.setAttribute('aria-selected', String(i === idx));
+    });
+
+    // Image fade-swap
+    const img = document.getElementById('arenaImg');
+    if (img) {
+      img.style.opacity = '0';
+      img.style.transform = 'scale(1.04)';
+      setTimeout(() => {
+        img.src = s.img;
+        img.alt = s.name;
+        img.style.opacity = '1';
+        img.style.transform = 'scale(1)';
+      }, 220);
+    }
+
+    // Text
+    const el = id => document.getElementById(id);
+    if (el('arenaName')) el('arenaName').textContent = s.name;
+    if (el('arenaDesc')) el('arenaDesc').textContent = s.desc;
+    if (el('arenaMfBadge')) el('arenaMfBadge').style.display = s.mf ? 'inline-flex' : 'none';
+    const tag = el('arenaTag');
+    if (tag) {
+      tag.textContent = `${s.tag} · ${s.name}`;
+      tag.style.color = `rgb(${s.rgb})`;
+      tag.style.borderColor = `rgba(${s.rgb},.4)`;
+      tag.style.background = `rgba(${s.rgb},.08)`;
+    }
+  }
+
+  document.getElementById('arenaPrev')?.addEventListener('click', () =>
+    setActive((activeIdx - 1 + STATIONS.length) % STATIONS.length));
+  document.getElementById('arenaNext')?.addEventListener('click', () =>
+    setActive((activeIdx + 1) % STATIONS.length));
+
+  buildArena();
+})();
 </script>
 </body>
 </html>

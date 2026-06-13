@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "landing",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "-l", "4400", "/Users/client/purinstinct-landingweb"],
+      "port": 4400
+    }
+  ]
+}
